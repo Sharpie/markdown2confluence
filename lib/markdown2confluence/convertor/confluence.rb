@@ -189,7 +189,15 @@ module Kramdown
       end
 
       def convert_codeblock(el, indent)
-        "{code}#{el.value}{code}\n"
+        # FIXME: Ugly kludge. Might be needed elsewhere, as in
+        # `convert_codespan` below.
+        if (el.attr.has_key?('class') && el.attr['class'][/^language-(\w+)/, 1])
+          lang = el.attr['class'][/^language-(\w+)/, 1]
+          open = "{code:#{lang}}"
+        else
+          open = "{code}"
+        end
+        "#{open}\n#{el.value}{code}\n"
       end
 
       def convert_codespan(el, indent)
